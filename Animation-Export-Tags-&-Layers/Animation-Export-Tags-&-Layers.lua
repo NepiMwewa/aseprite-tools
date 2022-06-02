@@ -35,8 +35,7 @@ function checkIfDuplicate(tempLayers, tempTags, tempPath)
 	  for j, layer in ipairs(tempLayers) do
 		if layer.layers ~= nil then --if layer is a group then loop through all layers in it.
 			for k, groupedLayer in ipairs(layer.layers) do
-				fileName = tempPath .. layer.name .. typeOfLetterSpacing
-					.. groupedLayer.name .. typeOfLetterSpacing .. tag.name
+				fileName = tempPath .. '/' .. fileNameWithGroups(groupedLayer.name, layer.name,tag.name)
 				return typeOfLetterSpacing .. fileName .. '.[png|json]'
 			end
 		else
@@ -54,20 +53,25 @@ function exportSpriteSheets(tempLayers, tempTags, tempPath)
 	  for j, layer in ipairs(tempLayers) do
 		if layer.layers ~= nil then --if layer is a group then loop through all layers in it.
 			for k, groupedLayer in ipairs(layer.layers) do
-				--Remove or change the groupedLayer, layer and tag name to how you want it.
-				--!!!Besure to also change the fileName in the checkIfDuplicate function.
-				fileName = tempPath .. '/' .. groupedLayer.name
-					.. typeOfLetterSpacing .. layer.name .. typeOfLetterSpacing .. tag.name
-				numberOfColumns = math.ceil(math.sqrt(tag.frames))
+				fileName = tempPath .. '/' .. fileNameWithGroups(groupedLayer.name, layer.name,tag.name)
+				numberOfColumns = math.ceil(math.sqrt(tag.frames))--calculates the best way place the sprites in a square
 				exportLayerAndTag(layer, tag, numberOfColumns, fileName)
 			end
 		else
-			fileName = tempPath .. '/' .. layer.name .. typeOfLetterSpacing .. tag.name
-			numberOfColumns = math.ceil(math.sqrt(tag.frames))
+			fileName = tempPath .. '/' .. fileNameWithoutGroups(layer.name, tag.name)
+			numberOfColumns = math.ceil(math.sqrt(tag.frames))--calculates the best way place the sprites in a square
 			exportLayerAndTag(layer, tag, numberOfColumns, fileName)
 		end
 	  end
 	end
+end
+
+--Remove or change the groupName, layerName, tagName and typeOfLetterSpacing to how you want it.
+function fileNameWithGroups(groupName, layerName, tagName)
+return groupName .. typeOfLetterSpacing .. layerName .. typeOfLetterSpacing .. tagName
+end
+function fileNameWithoutGroups(layerName, tagName)
+return layerName .. typeOfLetterSpacing .. tagName
 end
 
 
