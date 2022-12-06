@@ -4,7 +4,7 @@ function exportLayerAndTag(tempLayer, tempTag, tempColumnNumbers, tempFileName)
     app.command.ExportSpriteSheet{
 		ui=false,
 		askOverwrite=false,
-		type=SpriteSheetType.Rows,  	-- Change this if you want to change how the exported sprite is displayed.
+		type=SpriteSheetType.ROWS,  	-- Change this if you want to change how the exported sprite is displayed.
 		columns=tempColumnNumbers,    	-- Use one of these options(HORIZONTAL, VERTICAL, ROWS, COLUMNS, PACKED)
 		rows=tempColumnNumbers,			-- You can learn more here
 		bestFit=false;					--https://github.com/aseprite/api/blob/main/api/command/ExportSpriteSheet.md#exportspritesheet
