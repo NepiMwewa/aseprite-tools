@@ -128,7 +128,8 @@ local selectedType = layoutTypeMap[layoutDialog.data.layoutType]
 -- Use the sprite's current directory as the export path
 local exportPath = path
 
-table.insert(msg, checkIfDuplicate(spriteLayers, spr.tags, exportPath))
+-- Make sure checkIfDuplicate returns a string
+table.insert(msg, checkIfDuplicate(spriteLayers, spr.tags, path) or "No duplicates found")
 
 if app.alert{ title="Export Sprite Sheets", text=msg,
               buttons={ "&Yes", "&No" } } ~= 1 then
