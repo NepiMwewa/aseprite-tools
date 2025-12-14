@@ -11,7 +11,7 @@ function exportLayerAndTag(tempLayer, tempTag, tempColumnNumbers, tempFileName)
 		textureFilename=tempFileName .. '.png',
 		-- dataFilename=fn .. '.json',
 		dataFormat=SpriteSheetDataFormat.JSON_ARRAY,
-	  borderPadding=0,
+	  	borderPadding=0,
 		shapePadding=0,
 		innerPadding=0,
 		trimSprite=false,
@@ -51,20 +51,23 @@ end
 function exportSpriteSheets(tempLayers, tempTags, tempPath)
 	local numberOfColumns
 
-	for i,tag in ipairs(tempTags) do
-	  for j, layer in ipairs(tempLayers) do
-		if layer.layers ~= nil then --if layer is a group then loop through all layers in it.
-			for k, groupedLayer in ipairs(layer.layers) do
-				fileName = tempPath .. '/' .. fileNameWithGroups(layer.name, groupedLayer.name, tag.name)
-				numberOfColumns = math.ceil(math.sqrt(tag.frames))--calculates the best way place the sprites in a square
-				exportLayerAndTag(groupedLayer, tag, numberOfColumns, fileName)
+	for i, tag in ipairs(tempTags) do
+		local tagFolder = tempPath .. '/' .. tag.name -- Create a folder for each tag
+		app.fs.makeDirectory(tagFolder) -- Ensure the folder exists
+
+		for j, layer in ipairs(tempLayers) do
+			if layer.layers ~= nil then -- If layer is a group, loop through all sub-layers
+				for k, groupedLayer in ipairs(layer.layers) do
+					local fileName = tagFolder .. '/' .. fileNameWithGroups(layer.name, groupedLayer.name, tag.name)
+					numberOfColumns = tag.frames -- Keep all frames in a single row
+					exportLayerAndTag(groupedLayer, tag, numberOfColumns, fileName)
+				end
+			else
+				local fileName = tagFolder .. '/' .. fileNameWithoutGroups(layer.name, tag.name)
+				numberOfColumns = tag.frames -- Keep all frames in a single row
+				exportLayerAndTag(layer, tag, numberOfColumns, fileName)
 			end
-		else
-			fileName = tempPath .. '/' .. fileNameWithoutGroups(layer.name, tag.name)
-			numberOfColumns = math.ceil(math.sqrt(tag.frames))--calculates the best way place the sprites in a square
-			exportLayerAndTag(layer, tag, numberOfColumns, fileName)
 		end
-	  end
 	end
 end
 

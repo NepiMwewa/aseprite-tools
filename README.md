@@ -1,3 +1,5 @@
+![image](https://github.com/user-attachments/assets/70d794af-5e64-4f2c-96e5-5a04975f8864)All credits to @NepiMwewa.
+
 # aseprite-tools
 Aseprite tools
 
@@ -10,6 +12,10 @@ Within the first function you can change various export options that you need fo
 
 Within the script you can change the order of the groups, layers and tags in the naming convention of the new sprite sheets when exporting the animated spritesheets. It is located on lines 71 and 74. It is based off from what you name the groups, layers, and tags. the spacing letter can easily be changed within the function on line 90.
 
+**Small changes to this version:**
+- Keep the output, don't change the output result (keep rows)
+- Export them into folders per animation
+
 Open the file that you want to export:
 ![1](https://user-images.githubusercontent.com/17126294/171528492-407cc994-bf04-40e4-99c7-1f9fcc80bf61.PNG)
 
@@ -18,5 +24,9 @@ Go to File>Scripts>Animation Export Groups, Layers & Tags>Export Animations.
 
 See the results
 ![3](https://user-images.githubusercontent.com/17126294/171528504-3fd6271b-7a89-4998-8495-6ee85e94098e.PNG)
+
+**Changes in this version:**
+![image](https://github.com/user-attachments/assets/6293cf68-00bb-4d85-bbc7-0159cc973cbb)
+
 
 Hope this export script can be useful for others as well.
