@@ -1,10 +1,10 @@
 -- Export each tag into a different sprite sheet
 
-function exportLayerAndTag(tempLayer, tempTag, tempColumnNumbers, tempFileName)
+function exportLayerAndTag(tempLayer, tempTag, tempColumnNumbers, tempFileName, tempType)
     app.command.ExportSpriteSheet{
 		ui=false,
 		askOverwrite=false,
-		type=SpriteSheetType.ROWS,  	-- Change this if you want to change how the exported sprite is displayed.
+		type=tempType,  	-- Change this if you want to change how the exported sprite is displayed.
 		columns=tempColumnNumbers,    	-- Use one of these options(HORIZONTAL, VERTICAL, ROWS, COLUMNS, PACKED)
 		rows=tempColumnNumbers,			-- You can learn more here
 		bestFit=false;					--https://github.com/aseprite/api/blob/main/api/command/ExportSpriteSheet.md#exportspritesheet
@@ -48,7 +48,7 @@ function checkIfDuplicate(tempLayers, tempTags, tempPath)
 	end
 end
 
-function exportSpriteSheets(tempLayers, tempTags, tempPath)
+function exportSpriteSheets(tempLayers, tempTags, tempPath, tempType)
 	local numberOfColumns
 
 	for i, tag in ipairs(tempTags) do
@@ -60,12 +60,12 @@ function exportSpriteSheets(tempLayers, tempTags, tempPath)
 				for k, groupedLayer in ipairs(layer.layers) do
 					local fileName = tagFolder .. '/' .. fileNameWithGroups(layer.name, groupedLayer.name, tag.name)
 					numberOfColumns = tag.frames -- Keep all frames in a single row
-					exportLayerAndTag(groupedLayer, tag, numberOfColumns, fileName)
+					exportLayerAndTag(groupedLayer, tag, numberOfColumns, fileName, tempType)
 				end
 			else
 				local fileName = tagFolder .. '/' .. fileNameWithoutGroups(layer.name, tag.name)
 				numberOfColumns = tag.frames -- Keep all frames in a single row
-				exportLayerAndTag(layer, tag, numberOfColumns, fileName)
+				exportLayerAndTag(layer, tag, numberOfColumns, fileName, tempType)
 			end
 		end
 	end
@@ -94,11 +94,46 @@ fileName = nil
 -- Change this value for what type of spacing you want between group,layer and tag names.
 typeOfLetterSpacing = '_'
 
-table.insert(msg, checkIfDuplicate(spriteLayers, spr.tags, path))
+-- Prompt for sprite sheet layout type
+local layoutDialog = Dialog("Sprite Sheet Layout")
+layoutDialog:label{ text="Choose how to arrange frames in the sprite sheet:" }
+layoutDialog:newrow()
+layoutDialog:combobox{
+	id="layoutType",
+	label="Layout Type:",
+	option="Rows",
+	options={"Horizontal", "Vertical", "Rows", "Columns", "Packed"}
+}
+layoutDialog:newrow()
+layoutDialog:separator()
+layoutDialog:newrow()
+layoutDialog:button{ id="ok", text="OK" }
+layoutDialog:button{ id="cancel", text="Cancel" }
+layoutDialog:show()
+
+if layoutDialog.data.ok == false then
+	return
+end
+
+-- Convert selection to SpriteSheetType
+local layoutTypeMap = {
+	["Horizontal"] = SpriteSheetType.HORIZONTAL,
+	["Vertical"] = SpriteSheetType.VERTICAL,
+	["Rows"] = SpriteSheetType.ROWS,
+	["Columns"] = SpriteSheetType.COLUMNS,
+	["Packed"] = SpriteSheetType.PACKED
+}
+local selectedType = layoutTypeMap[layoutDialog.data.layoutType]
+
+-- Use the sprite's current directory as the export path
+local exportPath = path
+
+table.insert(msg, checkIfDuplicate(spriteLayers, spr.tags, exportPath))
 
 if app.alert{ title="Export Sprite Sheets", text=msg,
               buttons={ "&Yes", "&No" } } ~= 1 then
   return
 end
 
-exportSpriteSheets(spriteLayers, spr.tags, path)
+exportSpriteSheets(spriteLayers, spr.tags, exportPath, selectedType)
+app.alert("Export completed!")
